@@ -261,7 +261,6 @@ if __name__ == "__main__":
                     new_ids = new_ids.long()
                 else:
                     new_ids = torch.arange(boxes.shape[0]).long()
-                    ids = new_ids + 1
 
                 boxes = boxes[new_ids]
                 cropped_boxes = cropped_boxes[new_ids]
@@ -272,6 +271,7 @@ if __name__ == "__main__":
                     'maxvals': pose_output.maxvals.cpu()[new_ids],
                     'transl': pose_output.transl.cpu()[new_ids],
                     'pred_vertices': pose_output.pred_vertices.cpu()[new_ids],
+                    'pred_xyz_jts_17': pose_output.pred_xyz_jts_17.cpu()[new_ids] * 2,
                     'pred_xyz_jts_24': pose_output.pred_xyz_jts_24_struct.cpu()[new_ids] * 2,   # convert to meters
                     'smpl_faces': torch.from_numpy(pose_model.smpl.faces.astype(np.int32))
                 }

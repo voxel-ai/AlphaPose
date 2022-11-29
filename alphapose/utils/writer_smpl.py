@@ -1,3 +1,4 @@
+import copy
 import os
 import time
 from threading import Thread
@@ -105,6 +106,8 @@ class DataWriterSMPL():
                     self.write_image(orig_img, im_name, stream=stream if self.save_video else None)
             else:
                 # location prediction (n, kp, 2) | score prediction (n, kp, 1)
+                transl = copy.deepcopy(smpl_output['transl'].cpu())
+                pred_xyz_jts_17 = smpl_output['pred_xyz_jts_17'].reshape(-1, 17, 3).cpu()
                 uv_29 = smpl_output['pred_uvd_jts'].reshape(-1, 29, 3)[:, :, :2].cpu()
                 pred_xyz_jts_24 = smpl_output['pred_xyz_jts_24'].reshape(-1, 24, 3).cpu()
 
@@ -125,6 +128,9 @@ class DataWriterSMPL():
                     _result.append(
                         {
                             'keypoints': preds_img[k],
+                            'transl': transl[k],
+                            'pred_xyz_jts_17': pred_xyz_jts_17[k],
+                            'pred_xyz_jts_24': pred_xyz_jts_24[k],
                             'pred_xyz_jts': pred_xyz_jts_24[k],
                             'kp_score': preds_scores[k],
                             'proposal_score': torch.mean(preds_scores[k]) + scores[k] + 1.25 * max(preds_scores[k]),
@@ -150,10 +156,10 @@ class DataWriterSMPL():
                 final_result.append(result)
                 if self.opt.save_img or self.save_video or self.opt.vis:
                     from alphapose.utils.vis import vis_frame_smpl
-                    img = vis_frame_smpl(orig_img, result, smpl_output, self.opt, self.vis_thres)
+                    img = vis_frame_smpl(orig_img, copy.deepcopy(result), copy.deepcopy(smpl_output), self.opt, self.vis_thres)
                     if self.opt.show_skeleton:
                         from alphapose.utils.vis import vis_frame_skeleton
-                        img = vis_frame_skeleton(img, result, smpl_output, self.opt, self.vis_thres)
+                        img = vis_frame_skeleton(img, copy.deepcopy(result), copy.deepcopy(smpl_output), self.opt, self.vis_thres)
                     self.write_image(img, im_name, stream=stream if self.save_video else None)
 
     def write_image(self, img, im_name, stream=None):
