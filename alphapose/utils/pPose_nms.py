@@ -690,7 +690,20 @@ def write_json(all_results, outputpath, form=None, for_eval=False, outputfile='a
                 result['idx'] = human['idx']
             
             # 3d pose
-            if 'pred_xyz_jts' in human.keys():
+            if 'crop_box' in human.keys():
+                result['crop_box'] = human['crop_box']
+
+            if 'transl' in human.keys():
+                transl = human['transl']
+                transl = transl.cpu().numpy().tolist()
+                result['transl'] = transl
+
+            if 'pred_xyz_jts_17' in human.keys():
+                pred_xyz_jts_17 = human['pred_xyz_jts_17']
+                pred_xyz_jts_17 = pred_xyz_jts_17.cpu().numpy().tolist()
+                result['pred_xyz_jts_17'] = pred_xyz_jts_17
+
+            if 'pred_xyz_jts_24' in human.keys():
                 pred_xyz_jts = human['pred_xyz_jts']
                 pred_xyz_jts = pred_xyz_jts.cpu().numpy().tolist()
                 result['pred_xyz_jts'] = pred_xyz_jts

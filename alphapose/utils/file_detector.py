@@ -48,7 +48,7 @@ class FileDetectionLoader():
                 depth_dim=cfg.MODEL.EXTRA.DEPTH_DIM,
                 bbox_3d_shape=(2.2, 2,2, 2.2),
                 rot=cfg.DATASET.ROT_FACTOR, sigma=cfg.MODEL.EXTRA.SIGMA,
-                train=False, add_dpg=False, gpu_device=self.device,
+                train=False, add_dpg=False,
                 loss_type=cfg.LOSS['TYPE'])
 
         # initialize the det file list        
